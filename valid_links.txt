@@ -11,4 +11,4 @@ https://accounts.google.com/ServiceLogin?hl=uk&passive=true&continue=https://www
 https://www.google.com.ua//advanced_search?hl=uk&amp;authuser=0
 https://www.google.com.ua//intl/uk/ads/
 https://www.google.com.ua//intl/uk/about.html
-https://www.google.com.ua/setprefdomain?prefdom=US&amp;sig=K_X-ZsLcAJM9zMYa0bTSg3-4W8m3A%3D
+https://www.google.com.ua/setprefdomain?prefdom=US&amp;sig=K_FYlrTe7KepKyuqOK59eypKgce0A%3D
