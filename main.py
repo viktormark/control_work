@@ -8,6 +8,7 @@ import argparse
 import re
 import requests
 import PyPDF2
+import logging
 
 
 class LinkParser:
@@ -15,7 +16,12 @@ class LinkParser:
         self.valid_links = []
         self.broken_links = []
 
+    logging.basicConfig(level=logging.INFO, filename='my_log.log', filemode='w',
+                        format="%(asctime)s %(levelname)s %(message)s")
+
     def pars_link(self, param):
+        logging.info(f"Parsing links from {param}")
+
         response = requests.get(param)
         pattern = r'<a\s+(?:[^>]*?\s+)?href="([^"]*)"'
         links = re.findall(pattern, response.text)
@@ -29,8 +35,10 @@ class LinkParser:
             link_response = requests.get(link_url)
             if link_response.status_code == 200:
                 self.valid_links.append(link_url)
+                logging.info(f"Valid link: {link_url}")
             else:
                 self.broken_links.append(link_url)
+                logging.error(f"Broken link: {link_url}")
 
     def save_links(self):
         with open("valid_links.txt", "w") as file:
