@@ -1,13 +1,13 @@
-# Створити програму яка парсить HTML сторінку залежно від параметрів виклику, виклик формату:
+# Створити програму яка парсить HTML сторінку або pdf  залежно від параметрів виклику, виклик формату:
 # python main.py -url https://www.google.com.ua/
 # Якщо не вказано шлях зробити запит у користувача
-# Перевірка чи валідна лінка
 # Знайти всі лінки на сторінці(Перевірити що лінка валідна requests.get (status code == 200))
 # Посилання у яких статус код 200 зберегти в окремий файл , всі інші у файл з назвою broken_links.txt
 
 import argparse
 import re
 import requests
+import PyPDF2
 
 
 class LinkParser:
@@ -16,15 +16,11 @@ class LinkParser:
         self.broken_links = []
 
     def pars_link(self, param):
-        # url = "https://www.google.com.ua/"
         response = requests.get(param)
         pattern = r'<a\s+(?:[^>]*?\s+)?href="([^"]*)"'
         links = re.findall(pattern, response.text)
 
         for link in links:
-            '''якщо  посилання link не починається з 'https://' тоді до базової url
-                додається відносний шлях link для створення повної URL-адреси.
-                Результат зберігається в змінну link_url.'''
             if not link.startswith('https://'):
                 link_url = param + link
             else:
@@ -48,15 +44,46 @@ class LinkParser:
     def user_input(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('-url', type=str, help='Please set URL')
+        parser.add_argument('-pdf', type=str, help='Please set pdf')
         args = parser.parse_args()
 
         if args.url:
             self.pars_link(args.url)
+        elif args.pdf:
+            self.find_links_in_pdf(args.pdf)
         else:
-            url = input('Please set URL for parsing: ')
-            self.pars_link(url)
+            pars = input('Please set URL/pdf for parsing: ')
+            if pars.endswith('.pdf'):
+                self.find_links_in_pdf(pars)
+            else:
+                self.pars_link(pars)
 
         self.save_links()
+
+    def find_links_in_pdf(self, file_path):
+        with open(file_path, 'rb') as file:
+            pdf = PyPDF2.PdfReader(file)
+            num_pages = len(pdf.pages)
+
+            links = []
+
+            for page_number in range(num_pages):
+                page = pdf.pages[page_number]
+                page_text = page.extract_text()
+                pattern = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+                matches = re.findall(pattern, page_text)
+
+                links.extend(matches)
+
+            for link in links:
+                try:
+                    link_response = requests.get(link)
+                    if link_response.status_code == 200:
+                        self.valid_links.append(link)
+                    else:
+                        self.broken_links.append(link)
+                except requests.exceptions.RequestException as e:
+                    print(f"Error occurred while accessing {link}: {e}")
 
 
 link_parser = LinkParser()
