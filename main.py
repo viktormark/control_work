@@ -40,15 +40,6 @@ class LinkParser:
                 self.broken_links.append(link_url)
                 logging.error(f"Broken link: {link_url}")
 
-    def save_links(self):
-        with open("valid_links.txt", "w") as file:
-            for link in self.valid_links:
-                file.write(link + "\n")
-
-        with open("broken_links.txt", "w") as file:
-            for link in self.broken_links:
-                file.write(link + "\n")
-
     def user_input(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('-url', type=str, help='Please set URL')
@@ -66,7 +57,8 @@ class LinkParser:
             else:
                 self.pars_link(pars)
 
-        self.save_links()
+        link_saver = Save(self.valid_links, self.broken_links)
+        link_saver.save_links()
 
     def find_links_in_pdf(self, file_path):
         with open(file_path, 'rb') as file:
@@ -88,11 +80,30 @@ class LinkParser:
                     link_response = requests.get(link)
                     if link_response.status_code == 200:
                         self.valid_links.append(link)
+                        logging.info(f"Valid link: {link}")
                     else:
                         self.broken_links.append(link)
-                except requests.exceptions.RequestException as e:
-                    print(f"Error occurred while accessing {link}: {e}")
+                        logging.error(f"Broken link: {link}")
+                except requests.exceptions.RequestException:
+                    self.broken_links.append(link)
+                    logging.error(f"Broken link: {link}")
 
 
-link_parser = LinkParser()
-link_parser.user_input()
+class Save:
+    def __init__(self, valid_links, broken_links):
+        self.valid_links = valid_links
+        self.broken_links = broken_links
+
+    def save_links(self):
+        with open("valid_links.txt", "w") as file:
+            for link in self.valid_links:
+                file.write(link + "\n")
+
+        with open("broken_links.txt", "w") as file:
+            for link in self.broken_links:
+                file.write(link + "\n")
+
+
+if __name__ == '__main__':
+    link_parser = LinkParser()
+    link_parser.user_input()
