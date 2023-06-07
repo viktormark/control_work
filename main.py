@@ -6,6 +6,8 @@
 
 import argparse
 import re
+from pprint import pprint
+
 import requests
 import PyPDF2
 import logging
@@ -39,6 +41,7 @@ class LinkParser:
             else:
                 self.broken_links.append(link_url)
                 logging.error(f"Broken link: {link_url}")
+        #pprint(self.valid_links)
 
     def user_input(self):
         parser = argparse.ArgumentParser()
@@ -107,3 +110,5 @@ class Save:
 if __name__ == '__main__':
     link_parser = LinkParser()
     link_parser.user_input()
+
+
