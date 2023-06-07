@@ -2,27 +2,28 @@ from main import LinkParser, Save
 import pytest
 
 
+#
 class TestParsePdf:
 
     def setup(self):
         self.parser = LinkParser()
 
     def test_parse_valid_links_in_list(self):
-        url = r"C:\Users\vikto\OneDrive\Робочий стіл\control_work\1.pdf"
+        url = "../1.pdf"
 
         self.parser.find_links_in_pdf(url)
 
         assert len(self.parser.valid_links) > 0
 
     def test_parse_invalid_links_in_list(self):
-        url = r"C:\Users\vikto\OneDrive\Робочий стіл\control_work\1.pdf"
+        url = "../1.pdf"
 
         self.parser.find_links_in_pdf(url)
 
         assert len(self.parser.broken_links) > 0
 
     def test_save_valid_links_in_file(self):
-        url = r"C:\Users\vikto\OneDrive\Робочий стіл\control_work\1.pdf"
+        url = "../1.pdf"
 
         expected_valid_links = [
             "https://lms.ithillel.ua/",
@@ -42,7 +43,7 @@ class TestParsePdf:
         assert file_contents == expected_valid_links
 
     def test_save_invalid_links_in_file(self):
-        url = r"C:\Users\vikto\OneDrive\Робочий стіл\control_work\1.pdf"
+        url = "../1.pdf"
 
         expected_invalid_links = [
             "https://translater",
@@ -67,7 +68,7 @@ class TestParsePdf:
         assert file_contents == expected_invalid_links
 
     def test_parse_pdf_with_invalid_link(self):
-        pdf_file = r"C:\Users\vikto\OneDrive\Робочий стіл\control_work\8.pdf"
+        pdf_file = url = "../8.pdf"
 
         with pytest.raises(FileNotFoundError):
             self.parser.find_links_in_pdf(pdf_file)
@@ -141,5 +142,3 @@ class TestParseUrl:
             file_contents = file.read().splitlines()
 
         assert file_contents == expected_invalid_links
-
-
