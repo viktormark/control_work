@@ -41,7 +41,7 @@ class LinkParser:
             else:
                 self.broken_links.append(link_url)
                 logging.error(f"Broken link: {link_url}")
-        #pprint(self.valid_links)
+        # pprint(self.valid_links)
 
     def user_input(self):
         parser = argparse.ArgumentParser()
@@ -92,17 +92,23 @@ class LinkParser:
                     logging.error(f"Broken link: {link}")
 
 
+class FileNamed:
+    VALID_LINKS = "valid_links.txt"
+    BROKEN_LINKS = "broken_links.txt"
+
+
 class Save:
+
     def __init__(self, valid_links, broken_links):
         self.valid_links = valid_links
         self.broken_links = broken_links
 
     def save_links(self):
-        with open("valid_links.txt", "w") as file:
+        with open(FileNamed.VALID_LINKS, "w") as file:
             for link in self.valid_links:
                 file.write(link + "\n")
 
-        with open("broken_links.txt", "w") as file:
+        with open(FileNamed.BROKEN_LINKS, "w") as file:
             for link in self.broken_links:
                 file.write(link + "\n")
 
@@ -110,5 +116,3 @@ class Save:
 if __name__ == '__main__':
     link_parser = LinkParser()
     link_parser.user_input()
-
-

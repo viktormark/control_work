@@ -1,4 +1,4 @@
-from main import LinkParser, Save
+from main import LinkParser, Save, FileNamed
 import pytest
 import os
 
@@ -8,9 +8,14 @@ class PdfPath:
     PDF_path_2 = "/test_artifacts/invalid.pdf"
 
 
-# PDF = os.path.join(os.getcwd(), PdfPath.PDF_1)
 PDF_1 = os.getcwd() + PdfPath.PDF_path_1
 PDF_2 = os.getcwd() + PdfPath.PDF_path_2
+
+
+class Constants:
+    URL = "https://www.google.com.ua/"
+
+url = Constants.URL
 
 
 class TestParsePdf:
@@ -41,7 +46,7 @@ class TestParsePdf:
         link_saver = Save(self.parser.valid_links, [])
         link_saver.save_links()
 
-        with open('valid_links.txt', 'r') as file:
+        with open(FileNamed.VALID_LINKS, 'r') as file:
             file_contents = file.read().splitlines()
 
         assert file_contents == expected_valid_links
@@ -64,7 +69,7 @@ class TestParsePdf:
         link_saver = Save([], self.parser.broken_links)
         link_saver.save_links()
 
-        with open('broken_links.txt', 'r') as file:
+        with open(FileNamed.BROKEN_LINKS, 'r') as file:
             file_contents = file.read().splitlines()
 
         assert file_contents == expected_invalid_links
@@ -82,21 +87,17 @@ class TestParseUrl:
         self.parser = LinkParser()
 
     def test_parse_valid_links_in_list_url(self):
-        url = "https://www.google.com.ua/"
 
         self.parser.pars_link(url)
 
         assert len(self.parser.valid_links) > 0
 
     def test_parse_invalid_links_in_list_url(self):
-        url = "https://www.google.com.ua/"
-
         self.parser.pars_link(url)
 
         assert len(self.parser.broken_links) > 0
 
     def test_save_valid_links_in_file_url(self):
-        url = "https://www.google.com.ua/"
 
         expected_valid_links = [
             "https://www.google.com.ua/imghp?hl=uk&tab=wi",
@@ -120,13 +121,12 @@ class TestParseUrl:
         link_saver = Save(self.parser.valid_links, [])
         link_saver.save_links()
 
-        with open("valid_links.txt", "r") as file:
+        with open(FileNamed.VALID_LINKS, "r") as file:
             file_contents = file.read().splitlines()
 
         assert file_contents == expected_valid_links
 
     def test_save_invalid_links_in_file(self):
-        url = "https://www.google.com.ua/"
 
         expected_invalid_links = [
             "https://www.google.com.ua/http://www.google.com.ua/history/optout?hl=uk",
@@ -138,7 +138,7 @@ class TestParseUrl:
         link_saver = Save([], self.parser.broken_links)
         link_saver.save_links()
 
-        with open("broken_links.txt", "r") as file:
+        with open(FileNamed.BROKEN_LINKS, "r") as file:
             file_contents = file.read().splitlines()
 
         assert file_contents == expected_invalid_links
