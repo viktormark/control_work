@@ -1,3 +1,5 @@
+import logging
+
 from main import LinkParser, Save, FileNamed
 import pytest
 import os
@@ -15,21 +17,26 @@ PDF_2 = os.getcwd() + PdfPath.PDF_path_2
 class Constants:
     URL = "https://www.google.com.ua/"
 
+
 url = Constants.URL
 
 
 class TestParsePdf:
 
-    def setup(self):
+    def setup_method(self):
         self.parser = LinkParser()
 
+    @pytest.mark.regression
     def test_parse_valid_links_in_list(self):
         self.parser.find_links_in_pdf(PDF_1)
+        logging.info("regression")
 
         assert len(self.parser.valid_links) > 0
 
+    @pytest.mark.regression
     def test_parse_invalid_links_in_list(self):
         self.parser.find_links_in_pdf(PDF_1)
+        logging.info("regression")
 
         assert len(self.parser.broken_links) > 0
 
@@ -83,22 +90,25 @@ class TestParsePdf:
 
 
 class TestParseUrl:
-    def setup(self):
+    def setup_method(self):
         self.parser = LinkParser()
 
+    @pytest.mark.regression
     def test_parse_valid_links_in_list_url(self):
-
         self.parser.pars_link(url)
+        logging.info("regression")
 
         assert len(self.parser.valid_links) > 0
 
+    @pytest.mark.regression
     def test_parse_invalid_links_in_list_url(self):
         self.parser.pars_link(url)
+        logging.info("regression")
 
         assert len(self.parser.broken_links) > 0
 
+    @pytest.mark.skip(reason="Этот тест временно пропущен-динамические ссылки")
     def test_save_valid_links_in_file_url(self):
-
         expected_valid_links = [
             "https://www.google.com.ua/imghp?hl=uk&tab=wi",
             "https://maps.google.com.ua/maps?hl=uk&tab=wl",
@@ -126,8 +136,8 @@ class TestParseUrl:
 
         assert file_contents == expected_valid_links
 
+    @pytest.mark.skip(reason="Этот тест временно пропущен-динамические ссылки")
     def test_save_invalid_links_in_file(self):
-
         expected_invalid_links = [
             "https://www.google.com.ua/http://www.google.com.ua/history/optout?hl=uk",
             "https://www.google.com.ua/http://www.google.com.ua/intl/uk/services/",
