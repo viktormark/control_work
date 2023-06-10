@@ -5,3 +5,4 @@ broken_links.txt
 valid_links.txt
 tests/test_artifacts/1.pdf
 my_log.log
+ tests/log/log.txt
